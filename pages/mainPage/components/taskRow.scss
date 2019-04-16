@@ -1,0 +1,90 @@
+.task {
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-bottom: 1px solid #ededed;
+  cursor: pointer;
+
+  &.edit {
+    background-color: lightblue;
+  }
+
+  &.done {
+    > div:first-of-type, .description {
+      span {
+        color: lighten(#395070, 40%);
+      }
+    }
+  }
+
+
+  > div:first-of-type {
+    display: flex;
+    align-items: center;
+
+    span {
+      font-weight: bold;
+      color: #395070;
+    }
+
+    input {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .svg {
+      cursor: pointer;
+      fill: dimgray;
+    }
+  }
+
+  .input, .text-area {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .edit-icon {
+    margin-left: auto;
+    margin-right: 8px;
+  }
+
+  input, textarea {
+    border: none;
+    border-radius: 4px;
+    color: dimgray;
+    font-size: 14px;
+    padding: 6px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  label {
+    color: black;
+  }
+
+  .description {
+    padding-left: 24px;
+    padding-top: 10px;
+    width: 95%;
+
+    span {
+      font-style: italic;
+      color: #395070;
+    }
+  }
+
+  button {
+    width: 100px;
+    align-self: center;
+    margin-top: 10px;
+    background-color: white;
+    color: #395070;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 6px;
+  }
+}

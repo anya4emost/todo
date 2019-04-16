@@ -1,0 +1,33 @@
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  max-width: 980px;
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  margin-top: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+
+
+  .header {
+    background-color: #00869e;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    align-self: center;
+    font-weight: bold;
+  }
+
+  .add-task {
+    padding-left: 20px;
+    padding-top: 20px;
+    color: #00869e;
+    cursor: pointer;
+  }
+
+}
