@@ -1,7 +1,6 @@
 {
   "name": "test-todo-on-next",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@types/react": "^16.7.18",
     "@zeit/next-sass": "^1.0.1",
