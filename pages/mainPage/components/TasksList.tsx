@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { TaskRow } from "./TaskRow";
+import { connect } from 'react-redux'
 import {
   remove,
   assocPath,
@@ -15,6 +16,7 @@ import {
   map,
   findIndex,
 } from 'ramda';
+import { addTaskToTheList, onCheckboxChange, onTaskChange, onTaskClick, removeTask } from "../actions/actions";
 
 const styles = require('./taskList.scss');
 
@@ -25,39 +27,35 @@ interface ITask {
 }
 
 interface ITasksListProps {
-
-}
-
-interface ITasksListState {
+  addTaskToTheList: Function;
+  onTaskChange: Function;
+  onTaskClick: Function;
+  onCheckboxChange: Function;
+  removeTask: Function;
   activeTask: number;
   tasks: ITask[]
 }
 
+interface ITasksListState {
+
+}
+
 class TasksListContainer extends React.Component<ITasksListProps, ITasksListState> {
 
-  state = {
-    activeTask: -1,
-    tasks: [],
-  };
 
-  componentDidMount() {
-    if (typeof window !== 'undefined' && window.localStorage.getItem('tasks')) {
-      this.setState(JSON.parse(window.localStorage.getItem('tasks')));
-    }
-  }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.tasks.length < this.state.tasks.length) {
-      this.setState({ activeTask: this.state.tasks.length - 1 })
+    if (prevProps.tasks.length < this.props.tasks.length) {
+      this.setState({ activeTask: this.props.tasks.length - 1 })
     }
 
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('tasks', JSON.stringify(this.state));
+      window.localStorage.setItem('tasks', JSON.stringify(this.props.tasks));
     }
   }
 
   render() {
-    const { tasks, activeTask } = this.state;
+    const { tasks, activeTask } = this.props;
 
     const allTasks = sortBy(prop('title'))(tasks).reverse().map((task) => (
       <TaskRow
@@ -74,62 +72,57 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
       />
     ));
 
-    return (
-      <div className={ styles['tasks-list'] }>
-        <div className={ styles['header'] }>ToDo</div>
-        { allTasks }
-        <div className={ styles['add-task'] } onClick={ this.onAdd }>
-          <span>+ add new task</span>
+    return (<>
+        {/*<div>{store.getState()}</div>*/ }
+        <div className={ styles['tasks-list'] }>
+          <div className={ styles['header'] }>ToDo</div>
+          { allTasks }
+          <div className={ styles['add-task'] } onClick={ this.onAdd }>
+            <span>+ add new task</span>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   onRemove = (evt, id) => {
-    const { tasks } = this.state;
+    this.props.removeTask({evt, id});
     evt.stopPropagation();
-    this.setState({ tasks: remove(findIndex(propEq('id', id))(tasks), 1, tasks) });
   };
 
   onAdd = () => {
-    const { tasks } = this.state;
-
-    this.setState({
-      tasks: [
-        ...tasks,
-        {
-          id: tasks.length ? last(sortBy(prop('id'))(tasks)).id + 1 : 1,
-          title: '',
-          description: '',
-          done: false,
-        }
-      ],
-    });
+    this.props.addTaskToTheList();
   };
 
   onChange = (event, id, field) => {
-    const { tasks } = this.state;
-    this.setState({ tasks: map(when(propEq('id', id), assoc(field, event.target.value)), tasks) });
+    this.props.onTaskChange({ event, id, field });
   };
 
   onTaskClick = (id) => {
-    this.setState({ activeTask: id });
+    this.props.onTaskClick(id);
   };
 
   onButtonClick = (event) => {
-    this.setState({ activeTask: -1 });
+    this.props.onTaskClick(-1);
     event.stopPropagation();
   };
 
   onCheckboxChange = (event, id) => {
-    const { tasks } = this.state;
-
-    this.setState({
-      tasks: map((task) => when(propEq('id', id), assoc('done', !task.done))(task), tasks),
-    });
-
+    this.props.onCheckboxChange({ event, id });
     event.stopPropagation();
   };
 }
 
-export const TasksList = TasksListContainer;
+const mapStateToProps = (state) => {
+  return {
+    activeTask: state.activeTask,
+    tasks: state.tasks
+  }
+};
+
+const actions = { addTaskToTheList, removeTask, onTaskChange, onTaskClick, onCheckboxChange };
+
+export const TasksList = connect(
+  mapStateToProps,
+  actions
+)(TasksListContainer);
