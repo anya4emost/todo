@@ -1,26 +1,13 @@
 import * as React from 'react';
 import { TaskRow } from "./TaskRow";
 import { connect } from 'react-redux'
-import {
-  remove,
-  assocPath,
-  adjust,
-  sortBy,
-  compose,
-  toLower,
-  prop,
-  last,
-  when,
-  propEq,
-  assoc,
-  map,
-  findIndex,
-} from 'ramda';
+import { sortBy, prop, } from 'ramda';
 import { addTaskToTheList, onCheckboxChange, onTaskChange, onTaskClick, removeTask } from "../actions/actions";
 
 const styles = require('./taskList.scss');
 
 interface ITask {
+  id:number;
   title: string;
   description: string;
   done: boolean
@@ -41,8 +28,6 @@ interface ITasksListState {
 }
 
 class TasksListContainer extends React.Component<ITasksListProps, ITasksListState> {
-
-
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.tasks.length < this.props.tasks.length) {
@@ -86,7 +71,7 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
   }
 
   onRemove = (evt, id) => {
-    this.props.removeTask({evt, id});
+    this.props.removeTask( id);
     evt.stopPropagation();
   };
 
