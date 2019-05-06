@@ -1,34 +1,24 @@
 import * as React from 'react';
-import { createStore, compose } from "redux";
-import { reducer } from './mainPage/reducers';
 import { TasksList } from './mainPage/components';
 import { Provider } from "react-redux";
+import { addTasksToTheList } from "./mainPage/actions/actions";
 
-let initialState =
-    {
-      activeTask: -1,
-      tasks: [],
-    };
+class Home extends React.PureComponent<{}, {}> {
 
-if (typeof window !== 'undefined' && window.localStorage.getItem('tasks')) {
-  initialState.tasks=JSON.parse(window.localStorage.getItem('tasks'));
-}
+  static async getInitialProps({ req, res, store, query: { tasks }, isServer }) {
 
-const composeEnhancers =
-  (typeof window !== 'undefined' && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+    if (isServer) {
+      store.dispatch(addTasksToTheList(tasks));
+    }
 
-const store = createStore(
-  reducer,
-  initialState as any,
-  composeEnhancers(),
-);
+    return {};
+  }
 
-function Home() {
-  return (
-    <Provider store={ store }>
+  render() {
+    return (
       <TasksList/>
-    </Provider>
-  )
+    )
+  }
 }
 
 export default Home;

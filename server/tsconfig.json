@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../.next-server",
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "server.ts",
+    "*/**/*.ts"
+  ]
+}

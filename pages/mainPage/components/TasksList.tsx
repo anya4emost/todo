@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TaskRow } from "./TaskRow";
 import { connect } from 'react-redux'
 import { sortBy, prop, } from 'ramda';
-import { addTaskToTheList, onCheckboxChange, onTaskChange, onTaskClick, removeTask } from "../actions/actions";
+import { addTaskToTheList, changeTaskCompleteness, taskChanged, setActiveTask, removeTask } from "../actions/actions";
 
 const styles = require('./taskList.scss');
 
@@ -15,9 +15,9 @@ interface ITask {
 
 interface ITasksListProps {
   addTaskToTheList: Function;
-  onTaskChange: Function;
-  onTaskClick: Function;
-  onCheckboxChange: Function;
+  taskChanged: Function;
+  setActiveTask: Function;
+  changeTaskCompleteness: Function;
   removeTask: Function;
   activeTask: number;
   tasks: ITask[]
@@ -58,7 +58,6 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
     ));
 
     return (<>
-        {/*<div>{store.getState()}</div>*/ }
         <div className={ styles['tasks-list'] }>
           <div className={ styles['header'] }>ToDo</div>
           { allTasks }
@@ -77,23 +76,43 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
 
   onAdd = () => {
     this.props.addTaskToTheList();
+
+    fetch('/api/todo', {
+      method: 'POST',
+      body: JSON.stringify(this.props.tasks),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+      .then(response => console.log('Success:', JSON.stringify(response)))
+      .catch(error => console.error('Error:', error));
   };
 
   onChange = (event, id, field) => {
-    this.props.onTaskChange({ event, id, field });
+    this.props.taskChanged({ event, id, field });
   };
 
   onTaskClick = (id) => {
-    this.props.onTaskClick(id);
+    this.props.setActiveTask(id);
   };
 
   onButtonClick = (event) => {
-    this.props.onTaskClick(-1);
+    this.props.setActiveTask(-1);
     event.stopPropagation();
+
+    fetch('/api/todo', {
+      method: 'PUT',
+      body: JSON.stringify(this.props.tasks),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+      .then(response => console.log('Success:', JSON.stringify(response)))
+      .catch(error => console.error('Error:', error));
   };
 
   onCheckboxChange = (event, id) => {
-    this.props.onCheckboxChange({ event, id });
+    this.props.changeTaskCompleteness({ event, id });
     event.stopPropagation();
   };
 }
@@ -105,7 +124,7 @@ const mapStateToProps = (state) => {
   }
 };
 
-const actions = { addTaskToTheList, removeTask, onTaskChange, onTaskClick, onCheckboxChange };
+const actions = { addTaskToTheList, removeTask, taskChanged, setActiveTask, changeTaskCompleteness };
 
 export const TasksList = connect(
   mapStateToProps,

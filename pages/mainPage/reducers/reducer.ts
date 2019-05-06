@@ -11,9 +11,13 @@ import {
   findIndex,
 } from 'ramda';
 
-export const reducer = (state, action) => {
+export const reducer = (state = { activeTask: -1, tasks: [] }, action) => {
   const { payload } = action;
   switch (action.type) {
+
+    case ECandidatesActionTypes.ADD_TASKS_TO_THE_LIST:
+      return assoc('tasks', payload, state);
+
     case ECandidatesActionTypes.ADD_TASK_TO_THE_LIST:
       return assoc('tasks', [
         ...state.tasks,
@@ -25,17 +29,17 @@ export const reducer = (state, action) => {
         }
       ], state);
 
-    case ECandidatesActionTypes.ON_TASK_CLICK:
+    case ECandidatesActionTypes.SET_ACTIVE_TASK:
       return assoc('activeTask', payload, state);
 
-    case ECandidatesActionTypes.ON_CHECKBOX_CHANGE:
+    case ECandidatesActionTypes.CHANGE_TASK_COMPLETENESS:
       return assoc(
         'tasks',
         map((task) => when(propEq('id', payload.id), assoc('done', !task.done))(task), state.tasks),
         state
       );
 
-    case ECandidatesActionTypes.ON_TASK_CHANGE:
+    case ECandidatesActionTypes.TASK_CHANGED:
       return assoc(
         'tasks',
         map(when(propEq('id', payload.id), assoc(payload.field, payload.event.target.value)), state.tasks),

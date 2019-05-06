@@ -24,7 +24,7 @@ describe('reducer', () => {
 
     it('Выставляет активный таск', () => {
 
-      const action = { type: ECandidatesActionTypes.ON_TASK_CLICK, payload: 12 };
+      const action = { type: ECandidatesActionTypes.SET_ACTIVE_TASK, payload: 12 };
       const state = {};
 
       const result = reducer(state, action);
@@ -34,7 +34,7 @@ describe('reducer', () => {
 
     it('Изменяет и сохраняет значения инпутов', () => {
       const action = {
-        type: ECandidatesActionTypes.ON_TASK_CHANGE,
+        type: ECandidatesActionTypes.TASK_CHANGED,
         payload: { event: { target: { value: 'a' } }, id: 1, field: 'title' }
       };
 
@@ -49,7 +49,7 @@ describe('reducer', () => {
 
     it('Изменяет значения чекбоксов', () => {
       const action = {
-        type: ECandidatesActionTypes.ON_CHECKBOX_CHANGE,
+        type: ECandidatesActionTypes.CHANGE_TASK_COMPLETENESS,
         payload: { event: { }, id: 1 }
       };
 

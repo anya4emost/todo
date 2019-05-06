@@ -1,15 +1,17 @@
 import { createAction } from "../utils/redux/actionCreator";
 
 export enum ECandidatesActionTypes {
+  ADD_TASKS_TO_THE_LIST = 'ADD TASKS TO THE LIST',
   ADD_TASK_TO_THE_LIST = 'ADD TASK TO THE LIST',
-  ON_TASK_CHANGE = 'ON TASK CHANGE',
-  ON_TASK_CLICK = 'ON TASK CLICK',
+  TASK_CHANGED = 'TASK CHANGED',
+  SET_ACTIVE_TASK = 'SET ACTIVE TASK',
   REMOVE_TASK = 'REMOVE TASK',
-  ON_CHECKBOX_CHANGE = 'ON CHECKBOX CHANGE'
+  CHANGE_TASK_COMPLETENESS = 'CHANGE TASK COMPLETENESS'
 }
 
+export const addTasksToTheList = createAction(ECandidatesActionTypes.ADD_TASKS_TO_THE_LIST);
 export const addTaskToTheList = createAction(ECandidatesActionTypes.ADD_TASK_TO_THE_LIST);
 export const removeTask = createAction(ECandidatesActionTypes.REMOVE_TASK);
-export const onTaskChange = createAction(ECandidatesActionTypes.ON_TASK_CHANGE);
-export const onCheckboxChange = createAction(ECandidatesActionTypes.ON_CHECKBOX_CHANGE);
-export const onTaskClick = createAction(ECandidatesActionTypes.ON_TASK_CLICK);
+export const taskChanged = createAction(ECandidatesActionTypes.TASK_CHANGED);
+export const changeTaskCompleteness = createAction(ECandidatesActionTypes.CHANGE_TASK_COMPLETENESS);
+export const setActiveTask = createAction(ECandidatesActionTypes.SET_ACTIVE_TASK);
