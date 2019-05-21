@@ -1,8 +1,10 @@
-import { all } from 'redux-saga/effects'
+import { all } from 'redux-saga/effects';
+import { todoRequestsSagas } from "./todoRequestsSagas";
+
 
 function* allSagas() {
   yield all([
-
+    ...todoRequestsSagas
   ]);
 }
 

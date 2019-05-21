@@ -3,13 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const next = require("next");
 const bodyParser = require("body-parser");
+const ramda_1 = require("ramda");
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 app.prepare().then(() => {
     const server = express();
     server.use(bodyParser.json());
-    const todos = [];
+    let todos = [];
     server.get('/api/todos', (req, res) => {
         console.log('in get handler');
         res.send(todos);
@@ -17,18 +18,24 @@ app.prepare().then(() => {
     //Обновление сущности
     server.put('/api/todo', (req, res) => {
         console.log('in put handler', req.body);
-        console.log('todos', todos);
-        res.send(req.body);
+        todos = ramda_1.update(ramda_1.findIndex(ramda_1.propEq('id', req.body.id))(todos), req.body, todos);
+        res.send(todos);
     });
     //Создание сущности
     server.post('/api/todo', (req, res) => {
         console.log('in post handler', req.body);
         todos.push(req.body);
-        console.log('todos', todos);
         res.send(req.body);
     });
+    server.delete('/api/todo/:id', (req, res) => {
+        console.log('req', req.params.id);
+        console.log('todos1', todos);
+        console.log('req.params.id', typeof req.params.id);
+        console.log('');
+        todos = todos.filter(task => task.id != req.params.id);
+        console.log('todos2', todos);
+    });
     server.get('/', (req, res) => {
-        console.log('in home handler', todos);
         return app.render(req, res, '/', { tasks: todos });
     });
     server.get('*', app.getRequestHandler());

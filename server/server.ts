@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as next from 'next';
 import * as bodyParser from 'body-parser';
+import { update, findIndex, propEq } from "ramda";
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -10,7 +11,7 @@ app.prepare().then(() => {
   const server: any = express();
   server.use(bodyParser.json());
 
-  const todos = [];
+  let todos = [];
 
   server.get('/api/todos', (req, res) => {
     console.log('in get handler');
@@ -22,9 +23,8 @@ app.prepare().then(() => {
   server.put('/api/todo', (req, res) => {
     console.log('in put handler', req.body);
 
-    console.log('todos', todos);
-
-    res.send(req.body);
+    todos = update(findIndex(propEq('id', req.body.id))(todos), req.body, todos);
+    res.send(todos);
   });
 
   //Создание сущности
@@ -33,13 +33,19 @@ app.prepare().then(() => {
 
     todos.push(req.body);
 
-    console.log('todos', todos);
-
     res.send(req.body);
   });
 
+  server.delete('/api/todo/:id', (req, res) => {
+    console.log('req', req.params.id);
+    console.log('todos1', todos);
+
+    todos = todos.filter(task => task.id != req.params.id);
+    console.log('todos2', todos);
+  });
+
   server.get('/', (req, res) => {
-    return app.render(req, res, '/', { tasks:todos });
+    return app.render(req, res, '/', { tasks: todos });
   });
 
   server.get('*', app.getRequestHandler());

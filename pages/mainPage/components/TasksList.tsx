@@ -2,7 +2,14 @@ import * as React from 'react';
 import { TaskRow } from "./TaskRow";
 import { connect } from 'react-redux'
 import { sortBy, prop, } from 'ramda';
-import { addTaskToTheList, changeTaskCompleteness, taskChanged, setActiveTask, removeTask } from "../actions/actions";
+import {
+  addTaskToTheList,
+  changeTaskCompleteness,
+  taskChanged,
+  setActiveTask,
+  removeTask,
+  editTask
+} from "../actions/actions";
 
 const styles = require('./taskList.scss');
 
@@ -19,6 +26,7 @@ interface ITasksListProps {
   setActiveTask: Function;
   changeTaskCompleteness: Function;
   removeTask: Function;
+  editTask: Function;
   activeTask: number;
   tasks: ITask[]
 }
@@ -52,7 +60,7 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
         editMode={ activeTask === task.id }
         onChange={ (event, field) => this.onChange(event, task.id, field) }
         onTaskClick={ () => this.onTaskClick(task.id) }
-        onButtonClick={ (event) => this.onButtonClick(event) }
+        onButtonClick={ (event) => this.onButtonClick(event, task.id) }
         onCheckboxChange={ (event) => this.onCheckboxChange(event, task.id) }
       />
     ));
@@ -70,22 +78,12 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
   }
 
   onRemove = (evt, id) => {
-    this.props.removeTask( id);
+    this.props.removeTask(id);
     evt.stopPropagation();
   };
 
   onAdd = () => {
     this.props.addTaskToTheList();
-
-    fetch('/api/todo', {
-      method: 'POST',
-      body: JSON.stringify(this.props.tasks),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json())
-      .then(response => console.log('Success:', JSON.stringify(response)))
-      .catch(error => console.error('Error:', error));
   };
 
   onChange = (event, id, field) => {
@@ -96,19 +94,13 @@ class TasksListContainer extends React.Component<ITasksListProps, ITasksListStat
     this.props.setActiveTask(id);
   };
 
-  onButtonClick = (event) => {
+  onButtonClick = (event, id) => {
     this.props.setActiveTask(-1);
+    this.props.editTask(id);
     event.stopPropagation();
+    console.log('id', id);
 
-    fetch('/api/todo', {
-      method: 'PUT',
-      body: JSON.stringify(this.props.tasks),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json())
-      .then(response => console.log('Success:', JSON.stringify(response)))
-      .catch(error => console.error('Error:', error));
+
   };
 
   onCheckboxChange = (event, id) => {
@@ -124,7 +116,7 @@ const mapStateToProps = (state) => {
   }
 };
 
-const actions = { addTaskToTheList, removeTask, taskChanged, setActiveTask, changeTaskCompleteness };
+const actions = { addTaskToTheList, removeTask, taskChanged, setActiveTask, changeTaskCompleteness, editTask };
 
 export const TasksList = connect(
   mapStateToProps,
